@@ -29,5 +29,25 @@ add_filter( 'get_image_tag_class', function( $class, $post_id, $align, $size ) {
 }, 10, 4 );
 
 add_action( "wp_enqueue_scripts", function() {
-
-} )
+	wp_enqueue_script(
+		"three-js",
+		plugins_url( 'js/three.min.js', __FILE__ ),
+		array(),
+		time(),
+		true
+	);
+	wp_enqueue_script(
+		"three-plugins-js",
+		plugins_url( 'js/three-plugins.min.js', __FILE__ ),
+		array( 'three-js' ),
+		time(),
+		true
+	);
+	wp_enqueue_script(
+		"cardboard-js",
+		plugins_url( 'js/cardboard.min.js', __FILE__ ),
+		array( 'jquery','three-plugins-js' ),
+		time(),
+		true
+	);
+} );
