@@ -1,0 +1,9 @@
+{
+    "name": "miyauchi/cardboard",
+    "require": {},
+    "autoload": {
+        "files": [
+            "lib/Cardboard.php"
+        ]
+    }
+}
