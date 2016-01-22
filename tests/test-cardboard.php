@@ -12,5 +12,8 @@ class Cardboard_Test extends WP_UnitTestCase
 
 		$result = Cardboard::is_panorama_photo( dirname( __FILE__ ) . '/img/no-exif.jpg' );
 		$this->assertFalse( $result );
+
+		$result = Cardboard::is_panorama_photo( dirname( __FILE__ ) . '/img/streetview.jpg' );
+		$this->assertTrue( $result );
 	}
 }
