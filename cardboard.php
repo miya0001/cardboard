@@ -65,14 +65,14 @@ add_action( 'wp_head', function() {
 add_action( "wp_enqueue_scripts", function() {
 	wp_enqueue_script(
 		"three-js",
-		plugins_url( 'js/three.min.js', __FILE__ ),
+		plugins_url( 'three/three.min.js', __FILE__ ),
 		array(),
 		time(),
 		true
 	);
 	wp_enqueue_script(
 		"three-plugins-js",
-		plugins_url( 'js/three-plugins.min.js', __FILE__ ),
+		plugins_url( 'three/three-plugins.min.js', __FILE__ ),
 		array( 'three-js' ),
 		time(),
 		true

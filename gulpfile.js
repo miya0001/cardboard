@@ -15,12 +15,12 @@ gulp.task( 'download', function () {
 		] )
 		.pipe( concat( 'three-plugins.min.js' ) )
 		.pipe( uglify() )
-		.pipe( gulp.dest( 'js' ) );
+		.pipe( gulp.dest( 'three' ) );
 } );
 
 gulp.task( 'default', [ 'download' ], function () {
 	return gulp.src( [
 			'node_modules/three/three.min.js',
 		] )
-		.pipe( gulp.dest( 'js' ) );
+		.pipe( gulp.dest( 'three' ) );
 } );
