@@ -8,6 +8,7 @@ var uglify = require( 'gulp-uglify' );
 gulp.task( 'download', function () {
 	return download( [
 			'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/VRControls.js',
+			'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js',
 			'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/effects/VREffect.js',
 			'https://raw.githubusercontent.com/borismus/webvr-boilerplate/master/bower_components/webvr-polyfill/build/webvr-polyfill.js',
 			'https://raw.githubusercontent.com/borismus/webvr-boilerplate/master/build/webvr-manager.js'

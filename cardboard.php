@@ -20,13 +20,25 @@ add_action( "add_attachment", function( $post_id ){
 	}
 } );
 
-add_filter( 'get_image_tag_class', function( $class, $post_id, $align, $size ) {
+add_filter( 'image_send_to_editor', function( $html, $post_id ) {
 	if ( get_post_meta( $post_id, 'is_panorama_photo' ) ) {
-		return $class . ' panorama_photo';
+		return '[cardboard id="' . esc_attr( $post_id ) . '"]';
 	} else {
-		return $class;
+		return $html;
 	}
-}, 10, 4 );
+}, 10, 2 );
+
+add_shortcode( 'cardboard', function( $p, $content ) {
+	if ( intval( $p['id'] ) ) {
+		$src = wp_get_attachment_image_src( $p['id'], 'full' );
+		if ( $src ) {
+			return sprintf(
+				'<div class="cardboard" data-image="%s"></div>',
+				esc_url( $src[0] )
+			);
+		}
+	}
+} );
 
 add_action( "wp_enqueue_scripts", function() {
 	wp_enqueue_script(
@@ -45,7 +57,7 @@ add_action( "wp_enqueue_scripts", function() {
 	);
 	wp_enqueue_script(
 		"cardboard-js",
-		plugins_url( 'js/cardboard.min.js', __FILE__ ),
+		plugins_url( 'js/cardboard.js', __FILE__ ),
 		array( 'jquery','three-plugins-js' ),
 		time(),
 		true
