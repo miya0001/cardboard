@@ -27,7 +27,7 @@ class Cardboard
 		$models = apply_filters( 'cardboard_exif_models', $models );
 
 		$exif = exif_read_data( $image );
-		if ( $exif ) {
+		if ( $exif && ! empty( $exif['Model'] ) ) {
 			foreach ( $models as $model ) {
 				if ( false !== strpos( strtoupper( $exif['Model'] ), strtoupper( $model ) ) ) {
 					return true;
