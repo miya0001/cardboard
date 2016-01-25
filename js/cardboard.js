@@ -7,7 +7,7 @@
 		var scene = new THREE.Scene();
 
 		// mesh
-		var geometry = new THREE.SphereGeometry( 5, 16, 12 );
+		var geometry = new THREE.SphereGeometry( 5, 32, 24 );
 		geometry.scale( -1, 1, 1 );
 		var material = new THREE.MeshBasicMaterial( {
 			 map: THREE.ImageUtils.loadTexture( $( this ).data( 'image' ) )
