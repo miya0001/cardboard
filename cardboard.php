@@ -11,12 +11,12 @@
  * @package Cardboard
  */
 
-// register_activation_hook( __FILE__, 'cardboard_init' );
-// add_action( 'init', 'cardboard_init' );
-//
-// function cardboard_init() {
-// 	add_rewrite_endpoint( 'cardboard', EP_ROOT );
-// }
+register_activation_hook( __FILE__, 'cardboard_init' );
+
+function cardboard_init() {
+	add_rewrite_endpoint( 'cardboard', EP_ROOT );
+	flush_rewrite_rules();
+}
 
 $cardboard = new CardBoard();
 
@@ -31,22 +31,56 @@ class Cardboard
 
 	public function plugins_loaded()
 	{
-		add_action( "add_attachment", array( $this, "add_attachment" ) );
-		add_filter( "image_send_to_editor", array( $this, "image_send_to_editor" ), 10, 8 );
-		add_action( "wp_head", array( $this, "wp_head" ) );
-		add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
+		if ( is_admin() ) {
+			add_action( "add_attachment", array( $this, "add_attachment" ) );
+			add_filter( "image_send_to_editor", array( $this, "image_send_to_editor" ), 10, 8 );
+		} else {
+			add_action( "wp_head", array( $this, "wp_head" ) );
+			add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
+			add_action( "init", array( $this, "init" ) );
+			add_filter( "query_vars", array( $this, "query_vars" ) );
+			add_action( "template_redirect", array( $this, "template_redirect" ) );
 
-		add_shortcode( 'cardboard', function( $p, $content ) {
-			if ( intval( $p['id'] ) ) {
-				$src = wp_get_attachment_image_src( $p['id'], 'full' );
+			add_shortcode( 'cardboard', function( $p, $content ) {
+				if ( intval( $p['id'] ) ) {
+					$src = wp_get_attachment_image_src( $p['id'], 'full' );
+					if ( $src ) {
+						return sprintf(
+							'<div class="cardboard" data-image="%s"><a class="full-screen" href="%s"><span class="dashicons dashicons-editor-expand"></span></a></div>',
+							esc_url( $src[0] ),
+							home_url( 'cardboard/' . intval( $p['id'] ) )
+						);
+					}
+				}
+			} );
+		}
+	}
+
+	public function query_vars( $query )
+	{
+		$query[] = 'cardboard';
+		return $query;
+	}
+
+	public function template_redirect()
+	{
+		if ( isset( $GLOBALS['wp_query']->query['cardboard'] ) ) {
+			if ( intval( get_query_var( 'cardboard' ) ) ) {
+				$src = wp_get_attachment_image_src( get_query_var( 'cardboard' ), 'full' );
 				if ( $src ) {
-					return sprintf(
-						'<div class="cardboard" data-image="%s"><a class="full-screen"><span class="dashicons dashicons-editor-expand"></span></a></div>',
-						esc_url( $src[0] )
-					);
+					var_dump( $src );
+					exit;
 				}
 			}
-		} );
+			$GLOBALS['wp_query']->set_404();
+			status_header( 404 );
+			return;
+		}
+	}
+
+	public function init()
+	{
+		add_rewrite_endpoint( 'cardboard', EP_ROOT );
 	}
 
 	public function add_attachment( $post_id )
