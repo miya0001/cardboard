@@ -195,6 +195,8 @@ function animate( timestamp ) {
 
 	public function wp_enqueue_scripts()
 	{
+		wp_enqueue_style( 'dashicons' );
+
 		wp_enqueue_script(
 			"three-js",
 			plugins_url( 'three/three.min.js', __FILE__ ),
