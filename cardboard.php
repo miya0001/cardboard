@@ -67,8 +67,78 @@ class Cardboard
 		if ( isset( $GLOBALS['wp_query']->query['cardboard'] ) ) {
 			if ( intval( get_query_var( 'cardboard' ) ) ) {
 				$src = wp_get_attachment_image_src( get_query_var( 'cardboard' ), 'full' );
-				if ( $src ) {
-					var_dump( $src );
+				$post = get_post( get_query_var( 'cardboard' ) );
+				if ( $src && $post ) {
+					?>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<title><?php echo esc_html( $post->post_title ); ?></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+body {
+width: 100%;
+height: 100%;
+background-color: #000;
+color: #fff;
+margin: 0px;
+padding: 0;
+overflow: hidden;
+}
+</style>
+</head>
+
+<body></body>
+
+<script>
+WebVRConfig = {};
+</script>
+<script type="text/javascript" src="<?php echo plugins_url( 'three/three.min.js', __FILE__ ); ?>"></script>
+<script type="text/javascript" src="<?php echo plugins_url( 'three/three-plugins.min.js', __FILE__ ); ?>"></script>
+<script>
+var renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
+
+document.body.appendChild( renderer.domElement );
+
+var scene, camera, controls, effect, manager;
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 100 );
+controls = new THREE.VRControls( camera );
+effect = new THREE.VREffect( renderer );
+effect.setSize( window.innerWidth, window.innerHeight );
+manager = new WebVRManager( renderer, effect, { hideButton: false } );
+
+init();
+
+function init() {
+    var texloader = new THREE.TextureLoader();
+    var sphere = new THREE.Mesh(
+        new THREE.SphereGeometry( 20, 32, 24, 0 ), // Note: Math.PI * 2 = 360
+        new THREE.MeshBasicMaterial( {
+            map: texloader.load( '<?php echo esc_js( $src[0] ); ?>' )
+        } )
+    );
+    sphere.scale.x = -1;
+
+    scene.add( sphere );
+
+    animate();
+}
+
+function animate( timestamp ) {
+    controls.update();
+    manager.render( scene, camera, timestamp );
+    requestAnimationFrame( animate );
+}
+</script>
+</html>
+					<?php
 					exit;
 				}
 			}

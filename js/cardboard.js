@@ -1,7 +1,8 @@
 ( function( $ ) {
 	$( '.cardboard' ).each( function() {
-		var width = $( this ).width(),
-				height = $( this ).width() / 16 * 9;
+		var _self = this;
+		var width = $( _self ).width(),
+				height = $( _self ).width() / 16 * 9;
 
 		// scene
 		var scene = new THREE.Scene();
@@ -9,8 +10,9 @@
 		// mesh
 		var geometry = new THREE.SphereGeometry( 5, 32, 24 );
 		geometry.scale( -1, 1, 1 );
+		var texloader = new THREE.TextureLoader();
 		var material = new THREE.MeshBasicMaterial( {
-			 map: THREE.ImageUtils.loadTexture( $( this ).data( 'image' ) )
+			 map: texloader.load( $( _self ).data( 'image' ) )
 		} );
 		var sphere = new THREE.Mesh( geometry, material );
 		scene.add( sphere );
@@ -24,7 +26,7 @@
 		var renderer = new THREE.WebGLRenderer();
 		renderer.setSize( width, height );
 		renderer.setClearColor( { color: 0x000000 } );
-		$( this ).append( renderer.domElement );
+		$( _self ).append( renderer.domElement );
 		renderer.render( scene, camera );
 
 		// control
@@ -39,5 +41,14 @@
 			controls.update();
 		}
 		render();
+
+		window.addEventListener( 'resize', function() {
+			var width = $( _self ).width(),
+					height = $( _self ).width() / 16 * 9;
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( width, height );
+		}, false );
 	} );
 } )( jQuery );
