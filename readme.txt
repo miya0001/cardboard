@@ -1,6 +1,5 @@
 === Cardboard ===
 Contributors: miyauchi
-Donate link: http://example.com/
 Tags: photo, cardboard
 Requires at least: 4.4
 Tested up to: 4.4
@@ -13,6 +12,11 @@ This is a WordPress plugin enables you to enjoy 360 photo with Google Cardboard.
 == Description ==
 
 This plugin enables you to enjoy 360 photo with Google Cardboard.
+
+= Supported Cameras =
+
+* [Google Street View](https://itunes.apple.com/en/app/google-sutoritobyu/id904418768)
+* [RICOH THETA & THETA S](https://theta360.com/)
 
 == Installation ==
 
@@ -27,6 +31,7 @@ e.g.
 
 1. On PC.
 2. On mobile.
+3. Cardboard Viewer Mode.
 
 == Changelog ==
 

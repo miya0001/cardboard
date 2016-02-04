@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: Cardboard
- * Version: 0.1-alpha
- * Description: PLUGIN DESCRIPTION HERE
- * Author: YOUR NAME HERE
- * Author URI: YOUR SITE HERE
- * Plugin URI: PLUGIN SITE HERE
+ * Version: 0.1.1
+ * Description: This plugin enables you to enjoy 360 photo with Google Cardboard.
+ * Author: Takayuki Miyauchi
+ * Author URI: http://firegoby.jp/
+ * Plugin URI: https://github.com/miya0001/cardboard
  * Text Domain: cardboard
  * Domain Path: /languages
- * @package Cardboard
+ * @package cardboard
  */
 
 register_activation_hook( __FILE__, 'cardboard_init' );
