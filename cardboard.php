@@ -99,7 +99,7 @@ overflow: hidden;
 WebVRConfig = {};
 </script>
 <script type="text/javascript" src="<?php echo plugins_url( 'three/three.min.js', __FILE__ ); ?>"></script>
-<script type="text/javascript" src="<?php echo plugins_url( 'three/three-plugins.min.js', __FILE__ ); ?>"></script>
+<script type="text/javascript" src="<?php echo plugins_url( 'three/three-webvr.min.js', __FILE__ ); ?>"></script>
 <script>
 var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -205,8 +205,8 @@ function animate( timestamp ) {
 			true
 		);
 		wp_enqueue_script(
-			"three-plugins-js",
-			plugins_url( 'three/three-plugins.min.js', __FILE__ ),
+			"three-orbit-controls-js",
+			plugins_url( 'three/three-orbit-controls.min.js', __FILE__ ),
 			array( 'three-js' ),
 			time(),
 			true
@@ -214,7 +214,7 @@ function animate( timestamp ) {
 		wp_enqueue_script(
 			"cardboard-js",
 			plugins_url( 'js/cardboard.js', __FILE__ ),
-			array( 'jquery','three-plugins-js' ),
+			array( 'jquery','three-orbit-controls-js' ),
 			time(),
 			true
 		);
