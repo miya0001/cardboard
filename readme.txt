@@ -3,7 +3,7 @@ Contributors: miyauchi
 Tags: photo, cardboard, theta, 360
 Requires at least: 4.4
 Tested up to: 4.4
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ This is a WordPress plugin enables you to enjoy 360 photo with Google Cardboard.
 
 This plugin enables you to enjoy 360 photo with Google Cardboard.
 
-Demo:
+= Demo =
 
 https://firegoby.jp/cardboard-plugin-demo
 
@@ -43,7 +43,7 @@ Or insert shortcode manually:
 == Screenshots ==
 
 1. On PC.
-2. On mobile.
+2. Full-screen mode on mobile.
 3. Cardboard Viewer Mode.
 
 == Changelog ==
