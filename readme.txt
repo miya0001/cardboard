@@ -3,7 +3,7 @@ Contributors: miyauchi
 Tags: photo, cardboard, theta, 360
 Requires at least: 4.4
 Tested up to: 4.4
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ This plugin enables you to enjoy 360 photo with Google Cardboard.
 
 = Demo =
 
-https://firegoby.jp/cardboard-plugin-demo
+* https://firegoby.jp/cardboard-plugin-demo
 
 = Supported Cameras =
 
@@ -34,6 +34,10 @@ Or insert shortcode manually:
 `
 
 'id' should be attachment ID.
+
+= GitHub =
+
+* https://github.com/miya0001/cardboard
 
 == Installation ==
 
