@@ -16,4 +16,5 @@ node_modules
 npm-debug.log
 package.json
 phpunit.xml
+phpunit.xml.dist
 tests
