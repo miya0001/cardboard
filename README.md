@@ -6,6 +6,10 @@ This is a WordPress plugin enables you to enjoy 360 photo with Google Cardboard.
 
 ## How to use
 
+Download from [WordPress plugin directory](https://wordpress.org/plugins/cardboard/).
+
+or
+
 ```
 $ git clone git@github.com:miya0001/cardboard.git
 $ cd cardboard
