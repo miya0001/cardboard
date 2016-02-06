@@ -11,14 +11,20 @@ php:
   - 7.0
 
 env:
-  - WP_VERSION=latest WP_MULTISITE=0
+  matrix:
+    - WP_VERSION=latest WP_MULTISITE=0
+  global:
+    - SVN_REPO: https://plugins.svn.wordpress.org/cardboard/
+    - secure: "vlQj/LgdQYZWnx6caSE40BZnCgKWSFUgxAYJ32kQAtm1f6SbCyZ5no1GWDVvlB4RHAPZhSH0ckjjjmLeQBroqd8VEjPZ00FKyuPI6PQTCUfRi0H3C8nWtsk+ejmwUH+cJ+erNkyaDqHTSEr7O3EPR9NMFz4Aput/1auX1A59vFx2RMRttjZ/vk4fqJK8/itDfIB47u1ttr5gkLJZ8E2py1uJ4myNV1KcvpKxrJ82pqAYfL5T0nYB2TIfLwVSqZ7mKigHQXMAIB6X/N4V6TrA+8Qj1683ydejAuBj/MPXt94BCQUEXLJFU+svM4wV+KfWBnT7688KlFtntbV6eeT2uE0yL3epskU5dkzxOCDs1rzq59NCdJLgULcS8AP1A0IBSUIVHkOzORHHs0dx9h0jTeeby3L/7eIl/ywwVWFuIXrVAXqYb8TtTBkYXYqMrhx7g75mTxD6mELVR+tVR2/qv8/rf8PjZUqWWVgovB1lQUI1wv7V1r47XBTJLdCHvno01Q6NPrl+QieFLsdK01gYCdepaO2jw8rI0mLYCxH+sITRxqmxVg8IfdKARJt8eG0PuL0xT1gpAltNUY6tbwICqyQgcHj5HEpUgAt5HpWLcddwkGbA2j6yKmxRVjax2OLXOTij3fgpXU7U6/v4IAN49Ybcv/BV0RvAWcMKhSlnulg="
 
 matrix:
   include:
     - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=1
+      env: WP_VERSION=latest WP_MULTISITE=0 WP_PULUGIN_DEPLOY=1
 
 before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script: phpunit
+
+after_success: curl -L https://raw.githubusercontent.com/miya0001/travis2wpplugin/master/deploy.sh | bash
