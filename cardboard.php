@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Cardboard
- * Version: 0.1.6
+ * Version: 0.1.7
  * Description: This plugin enables you to enjoy 360 photo with Google Cardboard.
  * Author: Takayuki Miyauchi
  * Author URI: http://firegoby.jp/
