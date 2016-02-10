@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Cardboard
- * Version: 0.1.7
+ * Version: 0.2.0
  * Description: This plugin enables you to enjoy 360 photo with Google Cardboard.
  * Author: Takayuki Miyauchi
  * Author URI: http://firegoby.jp/
@@ -248,11 +248,14 @@ function animate( timestamp ) {
 		);
 		$models = apply_filters( 'cardboard_exif_models', $models );
 
-		$exif = exif_read_data( $image );
-		if ( $exif && ! empty( $exif['Model'] ) ) {
-			foreach ( $models as $model ) {
-				if ( false !== strpos( strtoupper( $exif['Model'] ), strtoupper( $model ) ) ) {
-					return true;
+		$file_type = wp_check_filetype( $image );
+		if ( "image/jpeg" === $file_type['type'] ) {
+			$exif = exif_read_data( $image );
+			if ( $exif && ! empty( $exif['Model'] ) ) {
+				foreach ( $models as $model ) {
+					if ( false !== strpos( strtoupper( $exif['Model'] ), strtoupper( $model ) ) ) {
+						return true;
+					}
 				}
 			}
 		}
