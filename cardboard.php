@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Cardboard
- * Version: 0.2.0
+ * Version: 0.3.0
  * Description: This plugin enables you to enjoy 360 photo with Google Cardboard.
  * Author: Takayuki Miyauchi
  * Author URI: http://firegoby.jp/
@@ -163,8 +163,13 @@ function animate( timestamp ) {
 
 	public function image_send_to_editor( $html, $post_id, $caption, $title, $align, $url, $size, $alt )
 	{
-		if ( get_post_meta( $post_id, 'is_panorama_photo' ) && ( ! is_array( $size ) && 'full' === $size ) ) {
+		if ( get_post_meta( $post_id, 'is_panorama_photo' ) && ( ! is_array( $size ) && ( 'full' === $size || 'large' === $size ) ) ) {
 			return '[cardboard id="' . esc_attr( $post_id ) . '"]';
+		} elseif ( get_post_meta( $post_id, 'is_panorama_photo' ) ) {
+			if ( preg_match( "/\.jpg$/", $url ) ) {
+				$html = str_replace( $url, esc_url( home_url( 'cardboard/' . $post_id ) ), $html );
+			}
+			return $html;
 		} else {
 			return $html;
 		}
