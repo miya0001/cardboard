@@ -39,7 +39,14 @@ class Cardboard
 
 	public function plugins_loaded()
 	{
+		add_shortcode( 'cardboard', array( $this, 'shortcode' ) );
 		add_action( "init", array( $this, "init" ) );
+
+		if( function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
+			add_action( 'init', array( $this, 'shortcode_ui_register' ) );
+			add_action( 'shortcode_ui_after_do_shortcode', array( $this, 'shortcode_ui_after_do_shortcode' ) );
+		}
+
 		if ( is_admin() ) {
 			add_action( "add_attachment", array( $this, "add_attachment" ) );
 			add_filter( "image_send_to_editor", array( $this, "image_send_to_editor" ), 10, 8 );
@@ -47,7 +54,6 @@ class Cardboard
 			add_action( "wp_head", array( $this, "wp_head" ) );
 			add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
 			add_action( "template_redirect", array( $this, "template_redirect" ) );
-			add_shortcode( 'cardboard', array( $this, 'shortcode' ) );
 		}
 	}
 
@@ -67,6 +73,43 @@ class Cardboard
 					home_url( self::QUERY_VAR . '/' . intval( $p['id'] ) )
 				);
 			}
+		}
+	}
+
+	/**
+	 * Register to shortcake.
+	 */
+	public function shortcode_ui_register() {
+		if ( function_exists( 'shortcode_ui_register_for_shortcode' ) ) {
+			shortcode_ui_register_for_shortcode(
+				'cardboard',
+				array(
+					'label'         => __( 'Cardboard', 'cardboard' ),
+					'listItemImage' => 'dashicons-camera',
+					'attrs'         => array(
+						array(
+							'label' => __( 'Image', 'cardboard' ),
+							'attr'  => 'id',
+							'type'  => 'attachment',
+						),
+					),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Add CSS and JS for preview
+	 *
+	 * @param string $shortcode
+	 */
+	public function shortcode_ui_after_do_shortcode( $shortcode ) {
+		if ( false !== stripos( $shortcode, '[cardboard' ) ) {
+			$this->wp_head();
+			echo '<script src="' . includes_url( '/js/jquery/jquery.js' ) . '"></script>';
+			echo '<script src="' . plugins_url( 'three/three.min.js', __FILE__ ) . '"></script>';
+			echo '<script src="' . plugins_url( 'three/three-orbit-controls.min.js', __FILE__ ) . '"></script>';
+			echo '<script src="' . plugins_url( 'js/cardboard.js', __FILE__ ) . '"></script>';
 		}
 	}
 
