@@ -50,9 +50,7 @@ class Cardboard
 		} else {
 			add_action( "wp_head", array( $this, "wp_head" ) );
 			add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
-			add_filter( "query_vars", array( $this, "query_vars" ) );
 			add_action( "template_redirect", array( $this, "template_redirect" ) );
-
 			add_shortcode( 'cardboard', function( $p, $content ) {
 				if ( intval( $p['id'] ) ) {
 					$src = wp_get_attachment_image_src( $p['id'], 'full' );
@@ -71,12 +69,6 @@ class Cardboard
 	public static function add_rewrite_endpoint()
 	{
 		add_rewrite_endpoint( 'cardboard', EP_ROOT );
-	}
-
-	public function query_vars( $query )
-	{
-		$query[] = 'cardboard';
-		return $query;
 	}
 
 	public function template_redirect()
