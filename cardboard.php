@@ -11,10 +11,17 @@
  * @package cardboard
  */
 
-register_activation_hook( __FILE__, 'cardboard_init' );
+register_activation_hook( __FILE__, 'cardboard_activate' );
 
-function cardboard_init() {
-	add_rewrite_endpoint( 'cardboard', EP_ROOT );
+function cardboard_activate() {
+	CardBoard::add_rewrite_endpoint();
+	flush_rewrite_rules();
+}
+
+register_deactivation_hook( __FILE__, 'cardboard_deactivate' );
+
+function cardboard_deactivate() {
+	CardBoard::remove_rewrite_endpoint();
 	flush_rewrite_rules();
 }
 
@@ -23,6 +30,7 @@ $cardboard = new CardBoard();
 class Cardboard
 {
 	const NS = 'http://ns.google.com/photos/1.0/panorama/';
+	const QUERY_VAR = 'cardboard';
 
 	public function __construct()
 	{
@@ -31,48 +39,69 @@ class Cardboard
 
 	public function plugins_loaded()
 	{
+		add_action( "init", array( $this, "init" ) );
 		if ( is_admin() ) {
 			add_action( "add_attachment", array( $this, "add_attachment" ) );
 			add_filter( "image_send_to_editor", array( $this, "image_send_to_editor" ), 10, 8 );
 		} else {
 			add_action( "wp_head", array( $this, "wp_head" ) );
 			add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
-			add_action( "init", array( $this, "init" ) );
-			add_filter( "query_vars", array( $this, "query_vars" ) );
 			add_action( "template_redirect", array( $this, "template_redirect" ) );
-
-			add_shortcode( 'cardboard', function( $p, $content ) {
-				if ( intval( $p['id'] ) ) {
-					$src = wp_get_attachment_image_src( $p['id'], 'full' );
-					if ( $src ) {
-						return sprintf(
-							'<div class="cardboard" data-image="%s"><a class="full-screen" href="%s"><span class="dashicons dashicons-editor-expand"></span></a></div>',
-							esc_url( $src[0] ),
-							home_url( 'cardboard/' . intval( $p['id'] ) )
-						);
-					}
-				}
-			} );
+			add_shortcode( 'cardboard', array( $this, 'shortcode' ) );
 		}
 	}
 
-	public function query_vars( $query )
+	/**
+	 * Shortcode
+	 * @param $p
+	 *
+	 * @return string
+	 */
+	public function shortcode( $p ) {
+		if ( intval( $p['id'] ) ) {
+			$src = wp_get_attachment_image_src( $p['id'], 'full' );
+			if ( $src ) {
+				return sprintf(
+					'<div class="cardboard" data-image="%s"><a class="full-screen" href="%s"><span class="dashicons dashicons-editor-expand"></span></a></div>',
+					esc_url( $src[0] ),
+					home_url( self::QUERY_VAR . '/' . intval( $p['id'] ) )
+				);
+			}
+		}
+	}
+
+	/**
+	 * add endpoint example.com/cardboard/1234
+	 */
+	public static function add_rewrite_endpoint()
 	{
-		$query[] = 'cardboard';
-		return $query;
+		add_rewrite_endpoint( self::QUERY_VAR, EP_ROOT );
+	}
+
+	/**
+	 * remove endpoint example.com/cardboard/1234
+	 */
+	public static function remove_rewrite_endpoint()
+	{
+		global $wp_rewrite;
+		foreach ( $wp_rewrite->endpoints as $key => $endpoint ) {
+			if( $endpoint  == array( EP_ROOT, self::QUERY_VAR, self::QUERY_VAR ) ) {
+				unset($wp_rewrite->endpoints[ $key ]);
+			}
+		};
 	}
 
 	public function template_redirect()
 	{
-		if ( isset( $GLOBALS['wp_query']->query['cardboard'] ) ) {
-			if ( intval( get_query_var( 'cardboard' ) ) ) {
-				$src = wp_get_attachment_image_src( get_query_var( 'cardboard' ), 'full' );
-				$post = get_post( get_query_var( 'cardboard' ) );
+		if ( isset( $GLOBALS['wp_query']->query[ self::QUERY_VAR ] ) ) {
+			if ( intval( get_query_var( self::QUERY_VAR ) ) ) {
+				$src = wp_get_attachment_image_src( get_query_var( self::QUERY_VAR ), 'full' );
+				$post = get_post( get_query_var( self::QUERY_VAR ) );
 				if ( $src && $post ) {
 					?>
 <!DOCTYPE html>
 
-<html lang="en">
+<html  <?php language_attributes(); ?>>
 <head>
 <title><?php echo esc_html( $post->post_title ); ?></title>
 <meta charset="utf-8">
@@ -150,7 +179,7 @@ function animate( timestamp ) {
 
 	public function init()
 	{
-		add_rewrite_endpoint( 'cardboard', EP_ROOT );
+		static::add_rewrite_endpoint();
 	}
 
 	public function add_attachment( $post_id )
@@ -167,7 +196,7 @@ function animate( timestamp ) {
 			return '[cardboard id="' . esc_attr( $post_id ) . '"]';
 		} elseif ( get_post_meta( $post_id, 'is_panorama_photo' ) ) {
 			if ( preg_match( "/\.jpg$/", $url ) ) {
-				$html = str_replace( $url, esc_url( home_url( 'cardboard/' . $post_id ) ), $html );
+				$html = str_replace( $url, esc_url( home_url( self::QUERY_VAR . '/' . $post_id ) ), $html );
 			}
 			return $html;
 		} else {
