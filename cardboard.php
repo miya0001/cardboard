@@ -11,10 +11,22 @@
  * @package cardboard
  */
 
-register_activation_hook( __FILE__, 'cardboard_init' );
+register_activation_hook( __FILE__, 'cardboard_activate' );
 
-function cardboard_init() {
+function cardboard_activate() {
 	CardBoard::add_rewrite_endpoint();
+	flush_rewrite_rules();
+}
+
+register_deactivation_hook( __FILE__, 'cardboard_deactivate' );
+
+function cardboard_deactivate() {
+	global $wp_rewrite;
+	foreach ( $wp_rewrite->endpoints as $key => $endpoint ) {
+		if( $endpoint  == array( EP_ROOT, 'cardboard', 'cardboard' ) ) {
+			unset($wp_rewrite->endpoints[ $key ]);
+		}
+	};
 	flush_rewrite_rules();
 }
 
@@ -56,7 +68,8 @@ class Cardboard
 		}
 	}
 
-	public static function add_rewrite_endpoint() {
+	public static function add_rewrite_endpoint()
+	{
 		add_rewrite_endpoint( 'cardboard', EP_ROOT );
 	}
 
