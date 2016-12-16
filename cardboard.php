@@ -65,11 +65,11 @@ class Cardboard
 	 */
 	public function shortcode( $p ) {
 		if ( intval( $p['id'] ) ) {
-			$src = wp_get_attachment_image_src( $p['id'], 'full' );
+			$src = wp_get_attachment_url( $p['id'] );
 			if ( $src ) {
 				return sprintf(
 					'<div class="cardboard" data-image="%s"><a class="full-screen" href="%s"><span class="dashicons dashicons-editor-expand"></span></a></div>',
-					esc_url( $src[0] ),
+					esc_url( $src ),
 					home_url( self::QUERY_VAR . '/' . intval( $p['id'] ) )
 				);
 			}
@@ -88,7 +88,7 @@ class Cardboard
 					'listItemImage' => 'dashicons-camera',
 					'attrs'         => array(
 						array(
-							'label' => __( 'Image', 'cardboard' ),
+							'label' => __( 'Image or Video', 'cardboard' ),
 							'attr'  => 'id',
 							'type'  => 'attachment',
 						),
@@ -138,7 +138,7 @@ class Cardboard
 	{
 		if ( isset( $GLOBALS['wp_query']->query[ self::QUERY_VAR ] ) ) {
 			if ( intval( get_query_var( self::QUERY_VAR ) ) ) {
-				$src = wp_get_attachment_image_src( get_query_var( self::QUERY_VAR ), 'full' );
+				$src = wp_get_attachment_url( get_query_var( self::QUERY_VAR ) );
 				$post = get_post( get_query_var( self::QUERY_VAR ) );
 				if ( $src && $post ) {
 					?>
@@ -178,7 +178,7 @@ renderer.setPixelRatio( window.devicePixelRatio );
 
 document.body.appendChild( renderer.domElement );
 
-var scene, camera, controls, effect, manager;
+var scene, camera, controls, effect, manager, texture, video, videoImageContext;
 scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 100 );
 controls = new THREE.VRControls( camera );
@@ -189,11 +189,39 @@ manager = new WebVRManager( renderer, effect, { hideButton: false } );
 init();
 
 function init() {
-    var texloader = new THREE.TextureLoader();
+
+
+	var image = '<?php echo esc_js( $src ); ?>';
+	if( image.indexOf('mp4') > -1 ) {
+		video = document.createElement('video');
+		video.src = image;
+		video.load();
+		video.loop = true;
+		video.play();
+
+		var videoImage = document.createElement('canvas');
+		videoImage.width = 1600;
+		videoImage.height = 900;
+
+		videoImageContext = videoImage.getContext('2d');
+		videoImageContext.fillStyle = '#000000';
+		videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+
+		//生成したcanvasをtextureとしてTHREE.Textureオブジェクトを生成
+		texture = new THREE.Texture(videoImage);
+		texture.minFilter = THREE.LinearFilter;
+		texture.magFilter = THREE.LinearFilter;
+
+	}
+	else {
+		var texloader = new THREE.TextureLoader();
+		texture = texloader.load( image )
+	}
+
     var sphere = new THREE.Mesh(
         new THREE.SphereGeometry( 20, 32, 24, 0 ), // Note: Math.PI * 2 = 360
         new THREE.MeshBasicMaterial( {
-            map: texloader.load( '<?php echo esc_js( $src[0] ); ?>' )
+            map: texture
         } )
     );
     sphere.scale.x = -1;
@@ -206,6 +234,15 @@ function init() {
 function animate( timestamp ) {
     controls.update();
     manager.render( scene, camera, timestamp );
+
+	//for video
+	if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+		videoImageContext.drawImage(video, 0, 0);
+		if (texture) {
+			texture.needsUpdate = true;
+		}
+	}
+
     requestAnimationFrame( animate );
 }
 </script>
