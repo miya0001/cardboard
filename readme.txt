@@ -3,7 +3,7 @@ Contributors: miyauchi
 Tags: photo, cardboard, theta, 360
 Requires at least: 4.4
 Tested up to: 4.7
-Stable tag: 4.7.0
+Stable tag: 4.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,9 @@ Or insert shortcode manually:
 3. Cardboard Viewer Mode.
 
 == Changelog ==
+
+= 4.7.1 =
+* Bug fix on rewrite problem.
 
 = 0.3.0 =
 
