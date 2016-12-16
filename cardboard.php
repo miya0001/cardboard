@@ -14,7 +14,7 @@
 register_activation_hook( __FILE__, 'cardboard_init' );
 
 function cardboard_init() {
-	add_rewrite_endpoint( 'cardboard', EP_ROOT );
+	CardBoard::add_rewrite_endpoint();
 	flush_rewrite_rules();
 }
 
@@ -31,13 +31,13 @@ class Cardboard
 
 	public function plugins_loaded()
 	{
+		add_action( "init", array( $this, "init" ) );
 		if ( is_admin() ) {
 			add_action( "add_attachment", array( $this, "add_attachment" ) );
 			add_filter( "image_send_to_editor", array( $this, "image_send_to_editor" ), 10, 8 );
 		} else {
 			add_action( "wp_head", array( $this, "wp_head" ) );
 			add_action( "wp_enqueue_scripts", array( $this, "wp_enqueue_scripts" ) );
-			add_action( "init", array( $this, "init" ) );
 			add_filter( "query_vars", array( $this, "query_vars" ) );
 			add_action( "template_redirect", array( $this, "template_redirect" ) );
 
@@ -54,6 +54,10 @@ class Cardboard
 				}
 			} );
 		}
+	}
+
+	public static function add_rewrite_endpoint() {
+		add_rewrite_endpoint( 'cardboard', EP_ROOT );
 	}
 
 	public function query_vars( $query )
@@ -150,7 +154,7 @@ function animate( timestamp ) {
 
 	public function init()
 	{
-		add_rewrite_endpoint( 'cardboard', EP_ROOT );
+		static::add_rewrite_endpoint();
 	}
 
 	public function add_attachment( $post_id )
