@@ -10,9 +10,41 @@
 		// mesh
 		var geometry = new THREE.SphereGeometry( 5, 32, 24 );
 		geometry.scale( -1, 1, 1 );
-		var texloader = new THREE.TextureLoader();
+
+		var texture;
+		var video;
+		var videoImageContext;
+		var image = $( _self ).data( 'image' );
+		if( image.indexOf('mp4') > -1 ) {
+			video = document.createElement('video');
+			video.src = image;
+			video.load();
+			video.loop = true;
+			video.volume = 0;
+			video.play();
+
+			var videoImage = document.createElement('canvas');
+			videoImage.width = 1600;
+			videoImage.height = 900;
+
+			videoImageContext = videoImage.getContext('2d');
+			videoImageContext.fillStyle = '#000000';
+			videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+
+			//生成したcanvasをtextureとしてTHREE.Textureオブジェクトを生成
+			texture = new THREE.Texture(videoImage);
+			texture.minFilter = THREE.LinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+
+		}
+		else {
+			var texloader = new THREE.TextureLoader();
+			texture = texloader.load( image )
+		}
+
 		var material = new THREE.MeshBasicMaterial( {
-			 map: texloader.load( $( _self ).data( 'image' ) )
+			 map: texture,
+			overdraw: true, side:THREE.DoubleSide
 		} );
 		var sphere = new THREE.Mesh( geometry, material );
 		scene.add( sphere );
@@ -39,6 +71,13 @@
 			sphere.rotation.y -= 0.05 * Math.PI / 180;
 			renderer.render( scene, camera );
 			controls.update();
+			//for video
+			if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+				videoImageContext.drawImage(video, 0, 0);
+				if (texture) {
+					texture.needsUpdate = true;
+				}
+			}
 		}
 		render();
 
